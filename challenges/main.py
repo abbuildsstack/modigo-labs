@@ -1,32 +1,21 @@
-def group_by_grade(students):
-    # TODO: determine each student's letter grade and group their names by grade band
-    grade_band = {}
-
-    for student in students:
-
-        name = student['name']
-        score = student['score']
-
-        if score >= 90:
-            grade = 'A'
-        elif score >= 80:
-            grade = 'B'
-        elif score >= 70:
-            grade = 'C'
-        elif score >= 60:
-            grade = 'D'
-        else:
-            grade = 'F'
-
-        # grade_band[grade] = grade_band.get(grade, []) + [name]
-        if grade not in grade_band:
-            grade_band[grade] = [name]
-        else:
-            grade_band[grade].append(name)
+def run_with_retries(results, max_attempts=3, on_failure="skip", log=None):
+    # TODO: handle the mutable default argument problem correctly —
+    # do not use a mutable object like [] directly as a default value.
+    # Then simulate retrying through `results` according to the rules described.
     
-    return grade_band
+    if log == None:
+        log = []
 
-print(group_by_grade([{'name': 'Ada', 'score': 95}, {'name': 'Bola', 'score': 82}]))
-print(group_by_grade([{'name': 'Chidi', 'score': 55}]))
-print(group_by_grade([]))
-print(group_by_grade([{'name': 'Ada', 'score': 92}, {'name': 'Bola', 'score': 95}]))
+    for outcome in results[:max_attempts]:
+        if outcome == 'success':
+            log.append('success')
+            break
+        elif outcome == 'fail':
+            if on_failure == 'log':
+                log.append('attempt failed')
+    
+    return log
+
+print(run_with_retries(['fail', 'fail', 'success']))
+print(run_with_retries(['fail', 'fail', 'success'], on_failure='log'))
+print(run_with_retries(['fail', 'fail', 'fail'], max_attempts=2))
